@@ -164,26 +164,85 @@ function exercice4 (decimal) {
     }
 }
 
+/**
+ * Calcul en temps réel le score d'une partie de bowling
+ */
 function exercice5 () {
-    let tableau= []
+    let tableau = [];
+    let bonus = [];
+    let score = 0;
     for (i=0; i<10; i++){
-        var x = Number(promptSync("entrée le nombre de quille tombé au 1er tir"));
-        if (x>=0 && x<11){
+        bonus[i] = 0;
+        var x = Number(promptSync("entrée le nombre de quille tombé au 1er tir "));
+        if (x>=0 && x<11){//empêche d'entrée un score impossible 
             tableau [i]=x;
-            if (x<10){
-                var y = Number(promptSync("entrée le nombre de quille tombé au 2nd tir"));
+            if (x<10 ){
                 do{
-                    tableau[i]+=y;
-                }while(y<0 || y>10-x)
+                    var y = Number(promptSync("entrée le nombre de quille tombé au 2nd tir "));
+                }while(y<0 || y>10-x)//empêche d'entré un score impossible
+
+                tableau[i+1]+=y;
+                //indique q'il s'agit d'un SPARE
+                if (x+y==10){
+                    bonus [i] = 1;
+                }
+            }
+            else{
+                bonus [i]=2;//indique qu'il s'agit d'un STRIKE
             }
         }
         else{
             console.log("valeur invalide");
             i--;
         }
+
+        score+=tableau[i];
+        //ajoute les points de ce tours en bonus aux STRIKE et SPARE qui doivent les recevoirs.
+        for (j=1;j<3; j++){
+            if (bonus[i-j]>=j){
+                score+=tableau[i];
+            }
+        }
+        console.log(tableau, score);
     }
-    console.log(tableau);
 
 }
 
-exercice5()
+function exercice5V2 () {
+    let tableau = [[],[],[],[],[],[],[],[],[],[],[]];
+    let score=0;
+    let bonus =[]
+    
+    for (i=0; i<10; i++){
+        for (j=0; j<2; j++){
+            var quille_tombe = Number(promptSync("entrée le nombre de quille tombé "));
+            if (quille_tombe>=0 && quille_tombe<11){//empêche d'entrée un score impossible 
+                tableau [i][j] = quille_tombe;
+                score+=quille_tombe;
+                //retire un lancé en cas de STRIKE
+                if (j==0 && quille_tombe==10){
+                    tableau [i][j+1]==0;
+                    bonus [i]==2;
+                    j++;
+                }
+                if (j== 1 && tableau [i][0]+tableau[i][1]==10){
+                    bonus [i]==1;
+                }
+                for (k=1;k<3; k++){
+                    if (bonus[i-k]>=k){
+                        score+=quille_tombe;
+                        bonus [i-k]--;
+                    }
+                }
+
+            }
+            else{
+                console.log("valeur invalide");
+                i--;//retire 1 à i pour toujours avoir le bon nombre de tours  
+            }
+        }
+    }
+    console.log(tableau, score);
+}
+
+exercice52 ()
